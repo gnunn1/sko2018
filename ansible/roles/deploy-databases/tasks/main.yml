@@ -1,0 +1,12 @@
+---
+- name: Deploy MySQL Database
+  command: "oc new-app --template=mysql-ephemeral --param=MYSQL_PASSWORD=password --param=MYSQL_USER=dbuser --param=MYSQL_DATABASE=sampledb -n {{ project }}"
+
+- name: Deploy PostgreSQL Database
+  command: "oc new-app --template=postgresql-ephemeral --param=POSTGRESQL_USER=dbuser --param=POSTGRESQL_PASSWORD=password --param=POSTGRESQL_DATABASE=sampledb -n {{ project }}"
+
+- name: Wait for databases to be ready
+  command: "oc wait --for=condition=Ready pods --selector {{item}}  -n {{project}}"
+  loop:
+    - name=mysql
+    - name=postgresql

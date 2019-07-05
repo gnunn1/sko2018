@@ -1,0 +1,20 @@
+---
+- name: Create project
+  k8s:
+    state: present
+    name: "{{project}}"
+    api_version: "project.openshift.io/v1"
+    kind: Project
+
+- name: Create subscription to AMQ Streams
+  k8s:
+    state: present
+    namespace: "{{ project }}"
+    merge_type:
+    - strategic-merge
+    - merge
+    definition: "{{ lookup('template', item ) | from_yaml }}"
+  loop:
+  - ./templates/operator_group.j2
+  - ./templates/catalog_source.j2
+  - ./templates/subscription.j2

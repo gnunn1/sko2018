@@ -1,0 +1,13 @@
+#############################################################
+# Provision SKO Demo into OCP4
+#############################################################
+- name: Install Demo
+  hosts: localhost
+
+  vars_files:
+    - vars/vars.yml
+
+  roles:
+#  - init-project
+#  - deploy-streams
+  - deploy-databases

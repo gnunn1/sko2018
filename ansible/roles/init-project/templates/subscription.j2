@@ -1,0 +1,15 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: amq-streams
+  namespace: "{{ project }}"
+  labels:
+    csc-owner-name: "installed-redhat-{{ project }}"
+    csc-owner-namespace: openshift-marketplace
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: amq-streams
+  source: "installed-redhat-{{ project }}"
+  sourceNamespace: "{{ project }}"
+  startingCSV: amqstreams.v1.1.0

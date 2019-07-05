@@ -1,0 +1,11 @@
+
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: amq-streams
+  namespace: "{{ project }}"
+  annotations:
+    olm.providedAPIs: Kafka.v1alpha1.kafka.strimzi.io,KafkaConnect.v1alpha1.kafka.strimzi.io,KafkaConnectS2I.v1alpha1.kafka.strimzi.io,KafkaMirrorMaker.v1alpha1.kafka.strimzi.io,KafkaTopic.v1alpha1.kafka.strimzi.io,KafkaUser.v1alpha1.kafka.strimzi.io
+spec:
+  targetNamespaces:
+  - "{{ project }}"

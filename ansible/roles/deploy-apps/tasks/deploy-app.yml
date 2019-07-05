@@ -1,0 +1,11 @@
+---
+- name: "Deploy {{ app.name }}"
+  command: "oc new-app {{ app.image }}:{{ app.version }}~{{ git_repo }} --context-dir={{ app.name }} --name={{ app.name }} -n {{ project }}"
+
+- name: "Create route for {{ app.name }}"
+  command: "oc expose svc/{{ app.name }}"
+  when: app.expose
+
+- name: "Wait for {{ app.name }} to be ready"
+  command: "oc wait --for=condition=Ready pods --selector name={{app.name}}  -n {{project}}"
+  when: not parallel

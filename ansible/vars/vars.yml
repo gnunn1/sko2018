@@ -1,0 +1,8 @@
+# Project to hold the demo
+project: streams-demo
+
+# Git repo to get source code from
+git_repo: https://github.com/gnunn1/sko2018
+
+# Whether to perform builds in parallel or sequentially, parallel requires more horsepower
+parallel: false
