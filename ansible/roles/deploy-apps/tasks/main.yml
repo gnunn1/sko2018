@@ -1,14 +1,47 @@
 ---
-- name: Deploy Applications
-  include: add-user.yml app={{ item }}
-  loop:
-    - {name: transform-camel, image: fuse7-java-openshift, version: 1.2, expose: false}
-    - {name: seat-ui-listener, image: fuse7-java-openshift, version: 1.2, expose: false}
-    - {name: seat-ui-reader, image: fuse7-java-openshift, version: 1.2, expose: false}
-    - {name: registration-ui, image: fuse7-eap-openshift, version: 1.2, expose: false}
-    - {name: seat-reserve-simulator, image: fuse7-eap-openshift, version: 1.2, expose: false}
-    - {name: registration-command, image: fuse7-java-openshift, version: 1.2, expose: false}
-    - {name: analytic-listener, image: fuse7-java-openshift, version: 1.2, expose: false}
-    - {name: analytic-ui, image: nodejs, version: 8, expose: true}
-    - {name: seat-ui, image: nodejs, version: 8, expose: true}
-    - {name: registration-live-ui, image: nodejs, version: 8, expose: true}
+# - name: Deploy Route ConfigMap
+#   k8s:
+#     state: present
+#     namespace: "{{ project }}"
+#     definition: "{{ lookup('template', item ) | from_yaml }}"
+#   loop:
+#     - ./templates/routes-cm.j2
+
+- name: App Information
+  set_fact:
+    apps:
+        - {name: transform-camel, image: fuse7-java-openshift, version: 1.2, expose: false}
+        - {name: seat-ui-listener, image: fuse7-java-openshift, version: 1.2, expose: false}
+        - {name: seat-ui-reader, image: fuse7-java-openshift, version: 1.2, expose: true}
+        - {name: registration-ui, image: fuse7-eap-openshift, version: 1.2, expose: true}
+        - {name: seat-reserve-simulator, image: fuse7-eap-openshift, version: 1.2, expose: false}
+        - {name: registration-command, image: fuse7-java-openshift, version: 1.2, expose: true}
+        - {name: analytic-listener, image: fuse7-java-openshift, version: 1.2, expose: true}
+        - {name: analytic-ui, image: nodejs, version: 8, expose: true}
+        - {name: seat-ui, image: nodejs, version: 8, expose: true}
+        - {name: registration-live-ui, image: nodejs, version: 8, expose: true"}
+
+- name: Deploy Application
+  include: deploy-app.yml app={{ item }}
+  loop: "{{ apps }}"
+
+- name: Get registration-command route
+  command: "oc get route registration-command -o jsonpath='{.spec.host}' -n {{ project }}"
+  register: rc_route
+
+- name: Update registration-live-ui route environment variable
+  command: "oc set env dc/registration-live-ui ROUTE_HOSTNAME=http://{{ rc_route }} -n {{ project }}"
+
+- name: Get analytic-listener route
+  command: "oc get route analytic-listener -o jsonpath='{.spec.host}' -n {{ project }}"
+  register: al_route
+
+- name: Update analytic-ui route environment variable
+  command: "oc set env dc/analytic-ui ROUTE_HOSTNAME=http://{{ al_route }} -n {{ project }}"
+
+- name: Get seat-ui-reader route
+  command: "oc get route seat-ui-reader -o jsonpath='{.spec.host}' -n {{ project }}"
+  register: sr_route
+
+- name: Update seat-ui route environment variable
+  command: "oc set env dc/seat-ui ROUTE_HOSTNAME=http://{{ sr_route }} -n {{ project }}"

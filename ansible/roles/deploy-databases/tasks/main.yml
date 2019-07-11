@@ -10,3 +10,23 @@
   loop:
     - name=mysql
     - name=postgresql
+
+- name: Get mysql pod
+  command: "oc get pod -l app=mysql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
+  register: mysql-pod
+
+- name: Upload mysql schema
+  command: "oc rsync ../files/db-mysql {{ mysql-pod }}:/var/lib/mysql/data"
+
+- name: Create mysql schema
+  command: "oc exec {{ mysql-pod}} -- bash -c 'mysql --user=dbuser --password=password sampledb < /var/lib/mysql/data/db-mysql/schema.sql'"
+
+- name: Get postgreSQL pod
+  command: "oc get pod -l app=postgresql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
+  register: pssql-pod
+
+- name: Upload postgresql schema
+  command: "oc rsync ../files/db-psql {{ psql-pod }}:/var/lib/pgsql/data/userdata"
+
+- name: Create mysql schema
+  command: "oc exec {{ psql-pod }} -- bash -c 'psql -U dbuser -d sampledb -a -f /var/lib/pgsql/data/userdata/db-psql/schema.sql'"

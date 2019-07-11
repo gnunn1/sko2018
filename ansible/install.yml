@@ -8,6 +8,7 @@
     - vars/vars.yml
 
   roles:
-#  - init-project
-#  - deploy-streams
+  - init-project
+  - deploy-streams
   - deploy-databases
+  - deploy-apps

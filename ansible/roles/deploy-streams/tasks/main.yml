@@ -7,17 +7,20 @@
   loop:
     - ./templates/streams-persistent.j2
 
-- debug:
+- name: Wait for streams
+  debug:
     msg: "Please wait for Kafka to be ready, this may take several minutes"
 
-- pause:
+- name: Pause 1 minute
+  pause:
     minutes: 1
 
 - name: Wait for AMQ Streams operator pod
-  command: "oc wait --for=condition=Ready pods --selector amq-streams-cluster-operator -n {{project}}"
+  command: "oc wait --for=condition=Ready pods --selector amq-streams-cluster-operator -n {{project}} --timeout=300s"
 
-- pause:
+- name: Pause 1 minute
+  pause:
     minutes: 1
 
 - name: Wait for Kafka to be ready
-  command: "oc wait --for=condition=Ready pods --selector strimzi.io/cluster=sko  -n {{project}}"
+  command: "oc wait --for=condition=Ready pods --selector strimzi.io/cluster=sko  -n {{project}} --timeout=300s"
