@@ -1,10 +1,15 @@
 ---
 - name: Debug app
   debug:
-    msg: "{{ app }}"
+    msg: " Deploying {{ app.name }}"
 
-- name: "Create Build {{ app.name }}"
+- name: "Create build {{ app.name }}"
   command: "oc new-build {{ app.image }}:{{ app.version }}~{{ git_repo }} --name={{ app.name }} --context-dir={{ app.name }} -n {{ project }}"
+  when: app.image is defined
+
+- name: "Create application {{ app.name }}"
+  shell: "oc process -f {{ role_path }}/files/{{ app.template }}.yml -p GIT_REPO={{ git_repo }} -p GIT_CONTEXT_DIR={{ app.name }} -p APP_NAME={{ app.name }} | oc create -f -"
+  when: app.template is defined
 
 - name: Wait for build to be started
   pause:
@@ -16,6 +21,7 @@
 
 - name: "Deploy {{ app.name }}"
   command: "oc new-app {{ app.name }} -n {{ project }}"
+  when: app.image is defined
 
 - name: Wait for artifacts to be created
   pause:
@@ -31,4 +37,4 @@
 
 - name: "Create route for {{ app.name }}"
   command: "oc expose svc/{{ app.name }} --port=8080"
-  when: app.expose
+  when: app.expose and app.image is defined

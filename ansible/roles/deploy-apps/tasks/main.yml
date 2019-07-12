@@ -10,13 +10,13 @@
 - name: App Information
   set_fact:
     apps:
-        - {name: transform-camel, image: fuse7-java-openshift, version: 1.2, expose: false}
-        - {name: seat-ui-listener, image: fuse7-java-openshift, version: 1.2, expose: false}
-        - {name: seat-ui-reader, image: fuse7-java-openshift, version: 1.2, expose: true}
+        - {name: transform-camel, template: camel-spring-boot-rest-template, version: 1.2, expose: false}
+        - {name: seat-ui-listener, template: camel-spring-boot-rest-template, version: 1.2, expose: false}
+        - {name: seat-ui-reader, template: camel-spring-boot-rest-template, version: 1.2, expose: true}
         - {name: registration-ui, image: fuse7-eap-openshift, version: 1.2, expose: true}
         - {name: seat-reserve-simulator, image: fuse7-eap-openshift, version: 1.2, expose: false}
-        - {name: registration-command, image: fuse7-java-openshift, version: 1.2, expose: true}
-        - {name: analytic-listener, image: fuse7-java-openshift, version: 1.2, expose: true}
+        - {name: registration-command, template: camel-spring-boot-rest-template, version: 1.2, expose: true}
+        - {name: analytic-listener, template: camel-spring-boot-rest-template, version: 1.2, expose: true}
         - {name: analytic-ui, image: nodejs, version: 8, expose: true}
         - {name: seat-ui, image: nodejs, version: 8, expose: true}
         - {name: registration-live-ui, image: nodejs, version: 8, expose: true}
