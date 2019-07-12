@@ -19,7 +19,7 @@
         - {name: analytic-listener, image: fuse7-java-openshift, version: 1.2, expose: true}
         - {name: analytic-ui, image: nodejs, version: 8, expose: true}
         - {name: seat-ui, image: nodejs, version: 8, expose: true}
-        - {name: registration-live-ui, image: nodejs, version: 8, expose: true"}
+        - {name: registration-live-ui, image: nodejs, version: 8, expose: true}
 
 - name: Deploy Application
   include: deploy-app.yml app={{ item }}
@@ -30,18 +30,18 @@
   register: rc_route
 
 - name: Update registration-live-ui route environment variable
-  command: "oc set env dc/registration-live-ui ROUTE_HOSTNAME=http://{{ rc_route }} -n {{ project }}"
+  command: "oc set env dc/registration-live-ui ROUTE_HOSTNAME=http://{{ rc_route.stdout }} -n {{ project }}"
 
 - name: Get analytic-listener route
   command: "oc get route analytic-listener -o jsonpath='{.spec.host}' -n {{ project }}"
   register: al_route
 
 - name: Update analytic-ui route environment variable
-  command: "oc set env dc/analytic-ui ROUTE_HOSTNAME=http://{{ al_route }} -n {{ project }}"
+  command: "oc set env dc/analytic-ui ROUTE_HOSTNAME=http://{{ al_route.stdout }} -n {{ project }}"
 
 - name: Get seat-ui-reader route
   command: "oc get route seat-ui-reader -o jsonpath='{.spec.host}' -n {{ project }}"
   register: sr_route
 
 - name: Update seat-ui route environment variable
-  command: "oc set env dc/seat-ui ROUTE_HOSTNAME=http://{{ sr_route }} -n {{ project }}"
+  command: "oc set env dc/seat-ui ROUTE_HOSTNAME=http://{{ sr_route.stdout }} -n {{ project }}"

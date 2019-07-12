@@ -11,22 +11,26 @@
     - name=mysql
     - name=postgresql
 
+- name: Wait for database containers to fully initialize
+  pause:
+    seconds: 30
+
 - name: Get mysql pod
   command: "oc get pod -l app=mysql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
-  register: mysql-pod
+  register: mysql_pod
 
 - name: Upload mysql schema
-  command: "oc rsync ../files/db-mysql {{ mysql-pod }}:/var/lib/mysql/data"
+  shell: "oc rsync {{ role_path }}/files/db-mysql {{ mysql_pod.stdout }}:/var/lib/mysql/data"
 
 - name: Create mysql schema
-  command: "oc exec {{ mysql-pod}} -- bash -c 'mysql --user=dbuser --password=password sampledb < /var/lib/mysql/data/db-mysql/schema.sql'"
+  command: "oc exec {{ mysql_pod.stdout}} -- bash -c 'mysql --user=dbuser --password=password sampledb < /var/lib/mysql/data/db-mysql/schema.sql'"
 
 - name: Get postgreSQL pod
   command: "oc get pod -l app=postgresql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
-  register: pssql-pod
+  register: psql_pod
 
 - name: Upload postgresql schema
-  command: "oc rsync ../files/db-psql {{ psql-pod }}:/var/lib/pgsql/data/userdata"
+  shell: "oc rsync {{ role_path }}/files/db-psql {{ psql_pod.stdout }}:/var/lib/pgsql/data/userdata"
 
-- name: Create mysql schema
-  command: "oc exec {{ psql-pod }} -- bash -c 'psql -U dbuser -d sampledb -a -f /var/lib/pgsql/data/userdata/db-psql/schema.sql'"
+- name: Create postgresql schema
+  command: "oc exec {{ psql_pod.stdout }} -- bash -c 'psql -U dbuser -d sampledb -a -f /var/lib/pgsql/data/userdata/db-psql/schema.sql'"

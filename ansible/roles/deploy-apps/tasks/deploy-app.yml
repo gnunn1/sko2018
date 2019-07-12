@@ -21,14 +21,14 @@
   pause:
     seconds: 1
 
-- name: Add routeui configuration map
-  command: "oc set env --from=cm/uirouteconfig dc/{{ app.name }}"
-  when: app.image == "nodejs"
+# - name: Add routeui configuration map
+#   command: "oc set env --from=cm/uirouteconfig dc/{{ app.name }}"
+#   when: app.image == "nodejs"
 
 # Skip waiting here to improve performance
 # - name: "Wait for {{ app.name }} to be ready"
 #   command: "oc wait --for=condition=Ready pods --selector name={{app.name}}  -n {{project}}"
 
 - name: "Create route for {{ app.name }}"
-  command: "oc expose svc/{{ app.name }}"
+  command: "oc expose svc/{{ app.name }} --port=8080"
   when: app.expose
