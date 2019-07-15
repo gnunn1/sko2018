@@ -1,9 +1,9 @@
 ---
 - name: Deploy MySQL Database
-  command: "oc new-app --template=mysql-ephemeral --param=MYSQL_PASSWORD=password --param=MYSQL_USER=dbuser --param=MYSQL_DATABASE=sampledb -n {{ project }}"
+  command: "oc new-app --template=mysql-persistent --name=mysql --param=MYSQL_PASSWORD=password --param=MYSQL_USER=dbuser --param=MYSQL_DATABASE=sampledb -n {{ project }}"
 
 - name: Deploy PostgreSQL Database
-  command: "oc new-app --template=postgresql-ephemeral --param=POSTGRESQL_USER=dbuser --param=POSTGRESQL_PASSWORD=password --param=POSTGRESQL_DATABASE=sampledb -n {{ project }}"
+  command: "oc new-app --template=postgresql-persistent --name=postgresql --param=POSTGRESQL_USER=dbuser --param=POSTGRESQL_PASSWORD=password --param=POSTGRESQL_DATABASE=sampledb -n {{ project }}"
 
 - name: Wait for databases to be ready
   command: "oc wait --for=condition=Ready pods --selector {{item}}  -n {{project}}"
@@ -13,24 +13,24 @@
 
 - name: Wait for database containers to fully initialize
   pause:
-    seconds: 30
+    seconds: 60
 
 - name: Get mysql pod
-  command: "oc get pod -l app=mysql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
+  command: "oc get pod -l app=mysql -o jsonpath='{.items[0].metadata.name}' -n {{project}}"
   register: mysql_pod
 
 - name: Upload mysql schema
-  shell: "oc rsync {{ role_path }}/files/db-mysql {{ mysql_pod.stdout }}:/var/lib/mysql/data"
+  shell: "oc rsync -n {{project}} {{ role_path }}/files/db-mysql {{ mysql_pod.stdout }}:/var/lib/mysql/data"
 
 - name: Create mysql schema
-  command: "oc exec {{ mysql_pod.stdout}} -- bash -c 'mysql --user=dbuser --password=password sampledb < /var/lib/mysql/data/db-mysql/schema.sql'"
+  command: "oc exec {{ mysql_pod.stdout}} -n {{project}} -- bash -c 'mysql --user=dbuser --password=password sampledb < /var/lib/mysql/data/db-mysql/schema.sql'"
 
 - name: Get postgreSQL pod
-  command: "oc get pod -l app=postgresql-ephemeral -o jsonpath='{.items[0].metadata.name}'"
+  command: "oc get pod -l app=postgresql -o jsonpath='{.items[0].metadata.name}' -n {{project}}"
   register: psql_pod
 
 - name: Upload postgresql schema
-  shell: "oc rsync {{ role_path }}/files/db-psql {{ psql_pod.stdout }}:/var/lib/pgsql/data/userdata"
+  shell: "oc rsync -n {{project}} {{ role_path }}/files/db-psql {{ psql_pod.stdout }}:/var/lib/pgsql/data/userdata"
 
 - name: Create postgresql schema
-  command: "oc exec {{ psql_pod.stdout }} -- bash -c 'psql -U dbuser -d sampledb -a -f /var/lib/pgsql/data/userdata/db-psql/schema.sql'"
+  command: "oc exec {{ psql_pod.stdout }} -n {{project}} -- bash -c 'psql -U dbuser -d sampledb -a -f /var/lib/pgsql/data/userdata/db-psql/schema.sql'"

@@ -2,9 +2,12 @@
 - name: Create project
   k8s:
     state: present
-    name: "{{project}}"
+    name: "{{ project }}"
     api_version: "project.openshift.io/v1"
     kind: Project
+
+- name: Select project
+  command: "oc project {{ project }}"
 
 - name: Create subscription to AMQ Streams
   k8s:
