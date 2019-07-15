@@ -1,3 +1,7 @@
+*** Deprecated
+
+For OpenShift 4, please see the ansible folder for instructions on how to setup this demo.
+
 To setup this demo, first you need to provision the project and kafka via strimzi using this script:
 
 ```
