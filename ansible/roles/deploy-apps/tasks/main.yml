@@ -20,6 +20,7 @@
         - {name: analytic-ui, image: nodejs, version: 8, expose: true}
         - {name: seat-ui, image: nodejs, version: 8, expose: true}
         - {name: registration-live-ui, image: nodejs, version: 8, expose: true}
+        - {name: dashboard, image: nginx, version: 1.12, expose: true}
 
 - name: Deploy Application
   include: deploy-app.yml app={{ item }}
