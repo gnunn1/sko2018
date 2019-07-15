@@ -8,7 +8,10 @@
     <iframe id="regLive" style="height:40%; width: 49%; border: 0px" style="border:none;"></iframe>
 
     <script type="text/javascript">
-        var baseHost = window.location.hostname.replace(/^(dashboard\.)/,"");
+        //var test = "dashboard-streams-demo.apps.cluster-toronto-f2f7.toronto-f2f7.openshiftworkshop.com";
+        //var baseHost = test.replace("dashboard", "");
+
+        var baseHost = window.location.hostname.replace("dashboard", "");
         console.log(baseHost);
         seatURL = "http://seat-ui" + baseHost;
         console.log(seatURL);
