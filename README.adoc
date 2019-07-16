@@ -31,3 +31,7 @@ Restart the offset
     oc rsh kafka-0
     ./kafka-consumer-groups.sh --bootstrap-server kafka:9092 --group analyticgrouop --reset-offsets --to-earliest --all-topics --execute
 
+## Dashboard Screenshot
+
+image::docs/screenshot.png[Screenshot]
+
