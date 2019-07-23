@@ -6,3 +6,7 @@ git_repo: https://github.com/gnunn1/sko2018
 
 # The apps wildcard for the openshift cluster
 apps_wildcard: apps.cluster-toronto-f2f7.toronto-f2f7.openshiftworkshop.com
+
+# Whether to deploy Kafka and databases persistently. Can be "ephemeral" or "persistent"
+# Note demo will break if you stop/start the cluster using ephmeral
+persistence_type: ephemeral

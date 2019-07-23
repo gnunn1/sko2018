@@ -1,9 +1,9 @@
 ---
 - name: Deploy MySQL Database
-  command: "oc new-app --template=mysql-persistent --name=mysql --param=MYSQL_PASSWORD=password --param=MYSQL_USER=dbuser --param=MYSQL_DATABASE=sampledb -n {{ project }}"
+  command: "oc new-app --template=mysql-{{persistence_type}} --name=mysql --param=MYSQL_PASSWORD=password --param=MYSQL_USER=dbuser --param=MYSQL_DATABASE=sampledb -n {{ project }}"
 
 - name: Deploy PostgreSQL Database
-  command: "oc new-app --template=postgresql-persistent --name=postgresql --param=POSTGRESQL_USER=dbuser --param=POSTGRESQL_PASSWORD=password --param=POSTGRESQL_DATABASE=sampledb -n {{ project }}"
+  command: "oc new-app --template=postgresql-{{persistence_type}} --name=postgresql --param=POSTGRESQL_USER=dbuser --param=POSTGRESQL_PASSWORD=password --param=POSTGRESQL_DATABASE=sampledb -n {{ project }}"
 
 - name: Wait for databases to be ready
   command: "oc wait --for=condition=Ready pods --selector {{item}}  -n {{project}}"

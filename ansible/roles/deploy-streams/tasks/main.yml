@@ -1,11 +1,16 @@
 ---
+- name: Debug template
+  template:
+    src: ./templates/streams.j2
+    dest: /home/gnunn/streams.yaml
+
 - name: Deploy AMQ Streams
   k8s:
     state: present
     namespace: "{{ project }}"
     definition: "{{ lookup('template', item ) | from_yaml }}"
   loop:
-    - ./templates/streams-persistent.j2
+    - ./templates/streams.j2
 
 - name: Wait for streams
   debug:

@@ -92,6 +92,9 @@ objects:
     - port: 8080
       protocol: TCP
       targetPort: 8080
+      name: web
+    - name: metric
+      port: 9779
     selector:
       app: "${APP_NAME}"
       component: "${APP_NAME}"
@@ -197,6 +200,7 @@ objects:
           app: "${APP_NAME}"
           provider: s2i
           version: "${APP_VERSION}"
+          metrics: camel
       spec:
         containers:
         - name: "${APP_NAME}"

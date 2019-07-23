@@ -20,7 +20,7 @@
   no_log: true
 
 - name: "Deploy {{ app.name }}"
-  command: "oc new-app {{ app.name }} -n {{ project }}"
+  command: "oc new-app --name={{ app.name }} --image-stream={{ app.name }} -n {{ project }}"
   when: app.image is defined
 
 - name: Wait for artifacts to be created

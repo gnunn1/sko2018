@@ -23,10 +23,15 @@ spec:
         memory: 2Gi
       requests:
         memory: 2Gi
+{% if persistence_type=="persistent" %}
     storage:
       type: persistent-claim
       size: 5Gi
       deleteClaim: true
+{% else %}
+    storage:
+      type: ephemeral
+{% endif %}
     metrics:
       lowercaseOutputName: true
       rules:
@@ -44,10 +49,15 @@ spec:
     livenessProbe:
       initialDelaySeconds: 15
       timeoutSeconds: 5
+{% if persistence_type=="persistent" %}
     storage:
       type: persistent-claim
       size: 1Gi
       deleteClaim: false
+{% else %}
+    storage:
+      type: ephemeral
+{% endif %}
     metrics:
       lowercaseOutputName: true
   entityOperator:
